@@ -1,5 +1,10 @@
+@import '~antd/dist/antd.css';
+
+
 .App {
-  text-align: center;
+  display:flex;
+  flex-direction: column;
+  padding: 1%;
 }
 
 .App-logo {
@@ -35,4 +40,36 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.Summaries{
+  display: flex;
+  flex-direction: row;
+  margin: 3%;
+  /* for horizontal aligning of child divs */
+  /* justify-content: center; */
+  /* for vertical aligning */
+  /* align-items: center; */
+}
+
+.SummaryVal {
+  margin: 1%
+}
+
+.finalbutton {
+  text-align: center 
+}
+
+.ratings {
+  margin: 7% 10% 7% 10%;
+  /* margin: 10%; */
+
+  /* margin-left: */
+}
+
+.ratingstext {
+  padding: 1%
+  /* margin: 10%; */
+
+  /* margin-left: */
 }

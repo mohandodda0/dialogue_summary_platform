@@ -5,8 +5,8 @@ import jsonData from './data/dialogsumdata.json';
 import 'rc-slider/assets/index.css';
 import fs from "fs";
 import { db } from './firebase'; // add
-import { collection, getDocs } from 'firebase/firestore';
-
+import { collection, getDocs, doc, setDoc, getDoc, addDoc  } from 'firebase/firestore';
+// import { } from "firebase/firestore"; 
 import { Button } from 'antd';
 import './App.css';
 
@@ -15,7 +15,7 @@ function App() {
   let [dialogueLines, setDialogueLines] = useState([])
   let [criteriaScores, setCriteriaScores] = useState({'Coherence':-1, 'Accuracy':-1, 'Coverage':-1, 'Concise':-1, 'Overall Quality':-1})
   let [annotating, setAnnotating] = useState(true)
-  const [books, setBooks] = useState([]); // update
+  let [salientInfo, setSalientInfo] = useState([])
 
   let showSummary = () => {
     setAnnotating(false)
@@ -30,8 +30,9 @@ function App() {
       const querySnapshot = await getDocs(collection(db, "summaries"));
       // console.log(querySnapshot)
       querySnapshot.forEach((doc) => {
-        console.log(`${doc.id} => ${doc.data()}`);
+        // console.log(`${doc.id} => ${doc.data()}`);
     });
+
     }
     // snapshot.forEach(doc => {
     //   console.log(doc.id, '=>', doc.data());
@@ -42,14 +43,16 @@ function App() {
 
 
 
-
-
   const getDocument = async () => {
     let texts = JSON.parse(JSON.stringify(jsonData))
     let text = texts[Math.floor(Math.random() * texts.length)]
-    // for (let j = 0; j < 3; j++) {
-    //     console.log(text["summary"+j.toString()])
-    // }
+    let summaries = []
+    for (let j = 0; j < 3; j++) {
+        let summary = text["summary"+(j+1).toString()]
+        if (text["summary"+(j+1).toString()]) {
+          // console.log(text["summary"+(j+1).toString()])
+        }
+    }
 
     // text = texts[0]  
     let lines = text.dialogue.split("\n")
@@ -65,7 +68,46 @@ function App() {
      getDocument();
    }, []);
 
-  let handleSubmit = () => {
+  let handleSubmit = async () => {
+
+    const summaryRef = doc(db, 'summaries', document.fname);
+    // console.log(summaryRef.get())
+
+    let summaries = []
+    for (let j = 0; j < 3; j++) {
+        let summary = document["summary"+(j+1).toString()]
+        if (summary) {
+          // console.log(document["summary"+(j+1).toString()])
+          summaries.push(summary)
+        }
+    }
+    let salientInfo = []
+    for (let i = 0; i < dialogueLines.length; i++) {
+      for (let j = 1; j < dialogueLines[i]-1; j++) {
+        salientInfo.push(dialogueLines[i][j].text)
+      }
+    }
+    // doc('users/' + user_key)
+
+    const docRef = await addDoc(collection(db, "responses"), {
+      salientInfo: salientInfo,
+      scores: {
+        Coherence: criteriaScores['Coherence'],
+        Accuracy: criteriaScores['Accuracy'],
+        Coverage: criteriaScores['Coverage'],
+        Concise: criteriaScores['Concise'],
+        "Overall Quality": criteriaScores['Overall Quality']
+      },
+      summary:  summaryRef
+    });
+
+     await setDoc(summaryRef, {
+      dialogue: document.dialogue,
+      fname: document.fname,
+      summary: summaries
+    }, { merge: true });
+
+
     setAnnotating(true)
     setCriteriaScores({'Coherence':-1, 'Accuracy':-1, 'Coverage':-1, 'Concise':-1, 'Overall Quality':-1})
     getDocument()
@@ -74,6 +116,7 @@ function App() {
   let callbackSetCoherence = (value) => {
     let currScores = criteriaScores
     currScores['Coherence'] = value
+    console.log(dialogueLines)
     setCriteriaScores(currScores)
   }
   let callbackSetAccuracy = (value) => {

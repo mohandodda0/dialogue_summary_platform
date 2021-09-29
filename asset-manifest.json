@@ -1,25 +1,25 @@
 {
   "files": {
-    "main.css": "/dialogue_summary_platform/static/css/main.d165833f.chunk.css",
-    "main.js": "/dialogue_summary_platform/static/js/main.0ab6f41c.chunk.js",
-    "main.js.map": "/dialogue_summary_platform/static/js/main.0ab6f41c.chunk.js.map",
-    "runtime-main.js": "/dialogue_summary_platform/static/js/runtime-main.4253aced.js",
-    "runtime-main.js.map": "/dialogue_summary_platform/static/js/runtime-main.4253aced.js.map",
-    "static/css/2.c6da176f.chunk.css": "/dialogue_summary_platform/static/css/2.c6da176f.chunk.css",
-    "static/js/2.b51ba173.chunk.js": "/dialogue_summary_platform/static/js/2.b51ba173.chunk.js",
-    "static/js/2.b51ba173.chunk.js.map": "/dialogue_summary_platform/static/js/2.b51ba173.chunk.js.map",
-    "static/js/3.26a47ac7.chunk.js": "/dialogue_summary_platform/static/js/3.26a47ac7.chunk.js",
-    "static/js/3.26a47ac7.chunk.js.map": "/dialogue_summary_platform/static/js/3.26a47ac7.chunk.js.map",
+    "main.css": "/dialogue_summary_platform/static/css/main.31fb2f88.chunk.css",
+    "main.js": "/dialogue_summary_platform/static/js/main.feb4a59c.chunk.js",
+    "main.js.map": "/dialogue_summary_platform/static/js/main.feb4a59c.chunk.js.map",
+    "runtime-main.js": "/dialogue_summary_platform/static/js/runtime-main.6b32eea8.js",
+    "runtime-main.js.map": "/dialogue_summary_platform/static/js/runtime-main.6b32eea8.js.map",
+    "static/css/2.8d001b9a.chunk.css": "/dialogue_summary_platform/static/css/2.8d001b9a.chunk.css",
+    "static/js/2.0bdeaf7b.chunk.js": "/dialogue_summary_platform/static/js/2.0bdeaf7b.chunk.js",
+    "static/js/2.0bdeaf7b.chunk.js.map": "/dialogue_summary_platform/static/js/2.0bdeaf7b.chunk.js.map",
+    "static/js/3.8f00ea3e.chunk.js": "/dialogue_summary_platform/static/js/3.8f00ea3e.chunk.js",
+    "static/js/3.8f00ea3e.chunk.js.map": "/dialogue_summary_platform/static/js/3.8f00ea3e.chunk.js.map",
     "index.html": "/dialogue_summary_platform/index.html",
-    "static/css/2.c6da176f.chunk.css.map": "/dialogue_summary_platform/static/css/2.c6da176f.chunk.css.map",
-    "static/css/main.d165833f.chunk.css.map": "/dialogue_summary_platform/static/css/main.d165833f.chunk.css.map",
-    "static/js/2.b51ba173.chunk.js.LICENSE.txt": "/dialogue_summary_platform/static/js/2.b51ba173.chunk.js.LICENSE.txt"
+    "static/css/2.8d001b9a.chunk.css.map": "/dialogue_summary_platform/static/css/2.8d001b9a.chunk.css.map",
+    "static/css/main.31fb2f88.chunk.css.map": "/dialogue_summary_platform/static/css/main.31fb2f88.chunk.css.map",
+    "static/js/2.0bdeaf7b.chunk.js.LICENSE.txt": "/dialogue_summary_platform/static/js/2.0bdeaf7b.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.4253aced.js",
-    "static/css/2.c6da176f.chunk.css",
-    "static/js/2.b51ba173.chunk.js",
-    "static/css/main.d165833f.chunk.css",
-    "static/js/main.0ab6f41c.chunk.js"
+    "static/js/runtime-main.6b32eea8.js",
+    "static/css/2.8d001b9a.chunk.css",
+    "static/js/2.0bdeaf7b.chunk.js",
+    "static/css/main.31fb2f88.chunk.css",
+    "static/js/main.feb4a59c.chunk.js"
   ]
 }

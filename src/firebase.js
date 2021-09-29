@@ -30,28 +30,28 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore();
 
 
-async function s() {
-    const querySnapshot = await getDocs(collection(db, "summaries"));
-    querySnapshot.forEach((doc) => {
-        console.log(`${doc.id} => ${doc.data()}`);
-    });
-}
+// async function s() {
+//     const querySnapshot = await getDocs(collection(db, "summaries"));
+//     querySnapshot.forEach((doc) => {
+//         console.log(`${doc.id} => ${doc.data()}`);
+//     });
+// }
 // s()
-async function s2() {
+// async function s2() {
 
 
-    let texts = JSON.parse(JSON.stringify(jsonData))
+//     let texts = JSON.parse(JSON.stringify(jsonData))
 
-    for (let i = 0; i < texts.length; i++) {
+//     for (let i = 0; i < texts.length; i++) {
 
-        for (let j = 0; j < 3; j++) {
-            if (texts[i]["summary"+j.toString()]) {
-                console.log(texts[i]["summary"+j.toString()])
-            }
+//         for (let j = 0; j < 3; j++) {
+//             if (texts[i]["summary"+j.toString()]) {
+//                 console.log(texts[i]["summary"+j.toString()])
+//             }
             
-        }
-    }
-}
+//         }
+//     }
+// }
 // s2()
 
 // admin.initializeApp();

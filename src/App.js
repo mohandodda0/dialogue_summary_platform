@@ -4,6 +4,9 @@ import Highlightable from 'highlightable';
 import jsonData from './data/dialogsumdata.json';
 import 'rc-slider/assets/index.css';
 import fs from "fs";
+import { db } from './firebase'; // add
+import { collection, getDocs } from 'firebase/firestore';
+
 import { Button } from 'antd';
 import './App.css';
 
@@ -12,16 +15,42 @@ function App() {
   let [dialogueLines, setDialogueLines] = useState([])
   let [criteriaScores, setCriteriaScores] = useState({'Coherence':-1, 'Accuracy':-1, 'Coverage':-1, 'Concise':-1, 'Overall Quality':-1})
   let [annotating, setAnnotating] = useState(true)
+  const [books, setBooks] = useState([]); // update
 
   let showSummary = () => {
     setAnnotating(false)
   }
 
 
+  useEffect(() => {
+
+    console.log('effect');
+    // const snapshot = db.collection('summaries').get()
+    const getSummaries = async () => {
+      const querySnapshot = await getDocs(collection(db, "summaries"));
+      // console.log(querySnapshot)
+      querySnapshot.forEach((doc) => {
+        console.log(`${doc.id} => ${doc.data()}`);
+    });
+    }
+    // snapshot.forEach(doc => {
+    //   console.log(doc.id, '=>', doc.data());
+    // });
+    getSummaries()
+  }, []);
+
+
+
+
+
 
   const getDocument = async () => {
     let texts = JSON.parse(JSON.stringify(jsonData))
     let text = texts[Math.floor(Math.random() * texts.length)]
+    // for (let j = 0; j < 3; j++) {
+    //     console.log(text["summary"+j.toString()])
+    // }
+
     // text = texts[0]  
     let lines = text.dialogue.split("\n")
     let expandedLines = []
@@ -92,7 +121,7 @@ function App() {
     });
     setDialogueLines(newDialogueLines)
   }
-  console.log(document)
+  // console.log(document)
   
   return (
     <div className="App">

@@ -79,30 +79,62 @@ function App() {
     }
     let salientInfo = []
     for (let i = 0; i < dialogueLines.length; i++) {
-      console.log( dialogueLines[i].length)
-      for (let j = 1; j < dialogueLines[i].length; j++) {
-        console.log(j)
-        salientInfo.push(dialogueLines[i][j].text)
+      // console.log( dialogueLines[i].length)
+      let intervals = dialogueLines[i].slice(1)
+      intervals = intervals.sort(function(a, b) {
+        // var keyA = new Date(a.updated_at),
+        //   keyB = new Date(b.updated_at);
+        // Compare the 2 dates
+        if (a.start < b.start) return -1;
+        if (a.start > b.start) return 1;
+        return 0;
+      });
+      let newintervals = []
+      for (let j = 0; j <intervals.length; j++) {
+        if (newintervals.length==0) {
+          // console.log(intervals[j])
+          newintervals.push(intervals[j])
+          // console.log(newintervals)
+        } else {
+          if (intervals[j].start <= newintervals[newintervals.length-1].end) {
+            newintervals[newintervals.length-1].end = Math.max( newintervals[newintervals.length-1].end, intervals[j].end)
+          } else {
+            newintervals.push(intervals[j])
+          }
+        }
       }
-    }
+        let vals = []
+        console.log(intervals)
+        console.log(newintervals)
+        for (let j = 0; j <newintervals.length; j++) {
+          let val = newintervals[j].data.text.slice(newintervals[j].start, newintervals[j].end + 1)
+          console.log(val)
+          vals.push(val)
+        }
+        if (vals.length!=0) {
+          salientInfo.push(vals)
+        }
+      }
+      console.log(salientInfo)
+    
 
-        await setDoc(summaryRef, {
-      dialogue: document.dialogue,
-      fname: document.fname,
-      summary: summaries
-    }, { merge: true });
+    //   await setDoc(summaryRef, {
+    //   dialogue: document.dialogue,
+    //   fname: document.fname,
+    //   summary: summaries
+    // }, { merge: true });
 
-    const docRef = await addDoc(collection(db, "responses"), {
-      salientInfo: salientInfo,
-      scores: {
-        Coherence: criteriaScores['Coherence'],
-        Accuracy: criteriaScores['Accuracy'],
-        Coverage: criteriaScores['Coverage'],
-        Concise: criteriaScores['Concise'],
-        "Overall Quality": criteriaScores['Overall Quality']
-      },
-      summary:  summaryRef
-    });
+    // const docRef = await addDoc(collection(db, "responses"), {
+    //   salientInfo: salientInfo,
+    //   scores: {
+    //     Coherence: criteriaScores['Coherence'],
+    //     Accuracy: criteriaScores['Accuracy'],
+    //     Coverage: criteriaScores['Coverage'],
+    //     Concise: criteriaScores['Concise'],
+    //     "Overall Quality": criteriaScores['Overall Quality']
+    //   },
+    //   summary:  summaryRef
+    // });
 
  
 
@@ -110,6 +142,7 @@ function App() {
     setAnnotating(true)
     setCriteriaScores({'Coherence':-1, 'Accuracy':-1, 'Coverage':-1, 'Concise':-1, 'Overall Quality':-1})
     getDocument()
+    setSalientInfo([])
   }
 
   let callbackSetCoherence = (value) => {

@@ -137,7 +137,7 @@ function Rate() {
         Concise: criteriaScores['Concise'],
         "Overall Quality": criteriaScores['Overall Quality']
       },
-      summary:  summaryRef
+      summary:  summaryRef,
       name: location.state.name
     });
 

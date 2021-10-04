@@ -3,7 +3,6 @@ import Slider, { Range } from 'rc-slider';
 import Tooltip from 'rc-tooltip';
 import Highlightable from 'highlightable';
 import jsonData from '../data/dialogsumdata.json';
-// import RaisedButton  from 'material-ui/RaisedButton';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import 'rc-slider/assets/index.css';
@@ -123,24 +122,24 @@ function Rate() {
       // console.log(salientInfo)
 
 
-    //   await setDoc(summaryRef, {
-    //   dialogue: document.dialogue,
-    //   fname: document.fname,
-    //   summary: summaries
-    // }, { merge: true });
+      await setDoc(summaryRef, {
+      dialogue: document.dialogue,
+      fname: document.fname,
+      summary: summaries
+    }, { merge: true });
 
-    // const docRef = await addDoc(collection(db, "responses"), {
-    //   salientInfo: salientInfo,
-    //   scores: {
-    //     Coherence: criteriaScores['Coherence'],
-    //     Accuracy: criteriaScores['Accuracy'],
-    //     Coverage: criteriaScores['Coverage'],
-    //     Concise: criteriaScores['Concise'],
-    //     "Overall Quality": criteriaScores['Overall Quality']
-    //   },
-    //   summary:  summaryRef
-    //   name: location.state.name
-    // });
+    const docRef = await addDoc(collection(db, "responses"), {
+      salientInfo: salientInfo,
+      scores: {
+        Coherence: criteriaScores['Coherence'],
+        Accuracy: criteriaScores['Accuracy'],
+        Coverage: criteriaScores['Coverage'],
+        Concise: criteriaScores['Concise'],
+        "Overall Quality": criteriaScores['Overall Quality']
+      },
+      summary:  summaryRef
+      name: location.state.name
+    });
 
  
 

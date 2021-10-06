@@ -22,32 +22,37 @@ function Rate() {
   // let [highlightsLeft, setHighlightsLeft] = useState({'Salient Information':  })
   let [color, setColor] = useState('#ffcc80')
   let [rangeList, setRangeList] = useState([])
+  let [name, setName] = useState("")
   const location = useLocation();
   let history = useHistory();
-  console.log(location)
-  if (!location.state || !location.state.name || location.state.name=="") {
-    console.log('no name!!!1')
-    history.push("/")
-  }
+  console.log(localStorage.getItem('name'))
+  // if (!location.state || !location.state.name || location.state.name=="") {
+  //   console.log('no name!!!1')
+  //   history.push("/")
+  // }
+  // if (localStorage.getItem('name') && localStorage.getItem('name')!="") {
+  //   setName(localStorage.getItem('name'))
+  // } else {
+  //   console.log('no name!!!1')
+  //   history.push("/")
+  // }
   
   // '#ffcc80'
 
 
   useEffect(() => {
-    if (!location.state || !location.state.name || location.state.name=="") {
+    // if (!location.state || !location.state.name || location.state.name=="") {
+    //   console.log('no name!!!1')
+    //   history.push("/")
+    // }
+
+    if (localStorage.getItem('name') && localStorage.getItem('name')!="") {
+      setName(localStorage.getItem('name'))
+    } else {
       console.log('no name!!!1')
       history.push("/")
     }
-    console.log('effect');
-    // const snapshot = db.collection('summaries').get()
-    const getSummaries = async () => {
-      const querySnapshot = await getDocs(collection(db, "summaries"));
-      // console.log(querySnapshot)
-      querySnapshot.forEach((doc) => {
-        // console.log(`${doc.id} => ${doc.data()}`);
-    });
-    }
-    getSummaries()
+
   }, []);
 
   const getDocument = async () => {
@@ -59,8 +64,8 @@ function Rate() {
     lines.forEach(line => {
       expandedLines.push([line])
     });
-    console.log(text)
-    console.log(expandedLines)
+    // console.log(text)
+    // console.log(expandedLines)
     setDocument(text);
     setDialogueLines(expandedLines)
     setRangeList([])
@@ -80,6 +85,7 @@ function Rate() {
         }
     }
     let salientInfo = []
+    let salientInfoAll = []
     for (let i = 0; i < dialogueLines.length; i++) {
       let intervals = dialogueLines[i].slice(1)
       intervals = intervals.sort(function(a, b) {
@@ -90,27 +96,34 @@ function Rate() {
       let newintervals = []
       for (let j = 0; j <intervals.length; j++) {
         if (newintervals.length==0) {
-          // console.log(intervals[j])
-          newintervals.push(intervals[j])
-          // console.log(newintervals)
+          newintervals.push({
+            ...intervals[j],
+            lineno: i
+          })
         } else {
           if (intervals[j].start <= newintervals[newintervals.length-1].end) {
             newintervals[newintervals.length-1].end = Math.max( newintervals[newintervals.length-1].end, intervals[j].end)
           } else {
-            newintervals.push(intervals[j])
+            // newintervals.push(intervals[j])
+            newintervals.push({
+              ...intervals[j],
+              lineno: i
+            })
           }
         }
       }
         let vals = []
-        // console.log(intervals)
-        // console.log(newintervals)
+        let vals2 = []
         for (let j = 0; j <newintervals.length; j++) {
           let val = newintervals[j].data.text.slice(newintervals[j].start, newintervals[j].end + 1)
-          console.log(val)
+          // console.log(val)
           vals.push(val)
+          delete newintervals[j]['data'];
+          vals2.push(newintervals[j])
         }
         if (vals.length!=0) {
           salientInfo = [...salientInfo, ...vals]
+          salientInfoAll = [...salientInfoAll, ...vals2]
         }
       }
       // console.log(salientInfo)
@@ -122,8 +135,10 @@ function Rate() {
       summary: summaries
     }, { merge: true });
     console.log(salientInfo)
+    console.log(salientInfoAll)
     const docRef = await addDoc(collection(db, "responses"), {
       salientInfo: salientInfo,
+      salientInfoAll: salientInfoAll,
       scores: {
         Coherence: criteriaScores['Coherence'],
         Accuracy: criteriaScores['Accuracy'],
@@ -132,7 +147,7 @@ function Rate() {
         "Overall Quality": criteriaScores['Overall Quality']
       },
       summary:  summaryRef,
-      name: location.state.name
+      name: name
     });
 
  
@@ -146,7 +161,6 @@ function Rate() {
   let callbackSetCoherence = (value) => {
     let currScores = criteriaScores
     currScores['Coherence'] = value
-    console.log(dialogueLines)
     setCriteriaScores(currScores)
   }
   let callbackSetAccuracy = (value) => {
@@ -165,7 +179,6 @@ function Rate() {
     setCriteriaScores(currScores)
   }
   let callbackSetOverall = (value) => {
-    console.log(criteriaScores)
     let currScores = criteriaScores
     currScores['Overall Quality'] = value
     setCriteriaScores(currScores)
@@ -188,14 +201,13 @@ function Rate() {
     if (rangeList.length>0) {
       for (let i = 0; i < dialogueLines.length; i++) {
         let idx = dialogueLines[i].indexOf(rangeList[rangeList.length - 1])
-        console.log(idx, i, rangeList[-1])
+        // console.log(idx, i, rangeList[-1])
         if (idx>-1) {
           newdialogline = [...dialogueLines[i].slice(0, idx), ...dialogueLines[i].slice(idx + 1)]
           index = i
         }
       }
-      console.log(dialogueLines)
-      console.log(rangeList)
+
       if (newdialogline) {
         dialogueLines[index] = newdialogline
         setRangeList(rangeList.slice(0, -1))

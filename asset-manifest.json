@@ -1,25 +1,25 @@
 {
   "files": {
     "main.css": "/dialogue_summary_platform/static/css/main.21202bb1.chunk.css",
-    "main.js": "/dialogue_summary_platform/static/js/main.c5a70c3c.chunk.js",
-    "main.js.map": "/dialogue_summary_platform/static/js/main.c5a70c3c.chunk.js.map",
-    "runtime-main.js": "/dialogue_summary_platform/static/js/runtime-main.dfdf9e1d.js",
-    "runtime-main.js.map": "/dialogue_summary_platform/static/js/runtime-main.dfdf9e1d.js.map",
+    "main.js": "/dialogue_summary_platform/static/js/main.927312d4.chunk.js",
+    "main.js.map": "/dialogue_summary_platform/static/js/main.927312d4.chunk.js.map",
+    "runtime-main.js": "/dialogue_summary_platform/static/js/runtime-main.06744f1e.js",
+    "runtime-main.js.map": "/dialogue_summary_platform/static/js/runtime-main.06744f1e.js.map",
     "static/css/2.0567791d.chunk.css": "/dialogue_summary_platform/static/css/2.0567791d.chunk.css",
-    "static/js/2.9fb4fd13.chunk.js": "/dialogue_summary_platform/static/js/2.9fb4fd13.chunk.js",
-    "static/js/2.9fb4fd13.chunk.js.map": "/dialogue_summary_platform/static/js/2.9fb4fd13.chunk.js.map",
-    "static/js/3.00243313.chunk.js": "/dialogue_summary_platform/static/js/3.00243313.chunk.js",
-    "static/js/3.00243313.chunk.js.map": "/dialogue_summary_platform/static/js/3.00243313.chunk.js.map",
+    "static/js/2.5ce109ec.chunk.js": "/dialogue_summary_platform/static/js/2.5ce109ec.chunk.js",
+    "static/js/2.5ce109ec.chunk.js.map": "/dialogue_summary_platform/static/js/2.5ce109ec.chunk.js.map",
+    "static/js/3.e83e126f.chunk.js": "/dialogue_summary_platform/static/js/3.e83e126f.chunk.js",
+    "static/js/3.e83e126f.chunk.js.map": "/dialogue_summary_platform/static/js/3.e83e126f.chunk.js.map",
     "index.html": "/dialogue_summary_platform/index.html",
     "static/css/2.0567791d.chunk.css.map": "/dialogue_summary_platform/static/css/2.0567791d.chunk.css.map",
     "static/css/main.21202bb1.chunk.css.map": "/dialogue_summary_platform/static/css/main.21202bb1.chunk.css.map",
-    "static/js/2.9fb4fd13.chunk.js.LICENSE.txt": "/dialogue_summary_platform/static/js/2.9fb4fd13.chunk.js.LICENSE.txt"
+    "static/js/2.5ce109ec.chunk.js.LICENSE.txt": "/dialogue_summary_platform/static/js/2.5ce109ec.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.dfdf9e1d.js",
+    "static/js/runtime-main.06744f1e.js",
     "static/css/2.0567791d.chunk.css",
-    "static/js/2.9fb4fd13.chunk.js",
+    "static/js/2.5ce109ec.chunk.js",
     "static/css/main.21202bb1.chunk.css",
-    "static/js/main.c5a70c3c.chunk.js"
+    "static/js/main.927312d4.chunk.js"
   ]
 }

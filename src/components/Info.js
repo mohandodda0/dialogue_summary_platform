@@ -22,14 +22,14 @@ function Info() {
 
         </div>
         <div className="section">
-            <h2>What is a good summary?</h2>
+            <h2>What is a Good Summary?</h2>
             <p> Roughly speaking, a good summary is a shorter piece of text that has the essence of the original. </p>
             <p>– tries to accomplish the same purpose and conveys the same information as the original post. </p>
             <p> In our case this is we are looking for dialogue summaries so we want the summaries to make sense within the context of a conversation!</p>
         </div>
 
         <div className="section">
-            <h2>How to grade salient information?</h2>
+            <h2>How to grade Salient Information?</h2>
             <p> In essence, we want you to highlight the important information of the document. </p>
             <p>This information you highlight needs to be that of which would be helpful in generating a summary.</p>
             <ul>
@@ -43,7 +43,7 @@ function Info() {
         </div>
 
         <div className="section">
-            <h2>Rate Summaries on different Criteria</h2>
+            <h2>Rate Summaries on Different Criteria</h2>
             <h4> After you have hilighted the salient information, we will give you 2 distinct summaries of the corresponding dialogue.</h4>
             <h4> We will have you compare the two summaries in different dimensions:</h4>
             <ol>

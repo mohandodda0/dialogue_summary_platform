@@ -19,7 +19,6 @@ function Rate() {
   let [dialogueLines, setDialogueLines] = useState([])
   let [criteriaScores, setCriteriaScores] = useState({'Coherence':0, 'Accuracy':0, 'Coverage':0, 'Concise':0, 'Overall Quality':0})
   let [annotating, setAnnotating] = useState(true)
-  let [salientInfo, setSalientInfo] = useState([])
   // let [highlightsLeft, setHighlightsLeft] = useState({'Salient Information':  })
   let [color, setColor] = useState('#ffcc80')
   let [rangeList, setRangeList] = useState([])
@@ -51,9 +50,6 @@ function Rate() {
     getSummaries()
   }, []);
 
-
-
-
   const getDocument = async () => {
     let texts = JSON.parse(JSON.stringify(jsonData))
     let text = texts[Math.floor(Math.random() * texts.length)]
@@ -68,7 +64,6 @@ function Rate() {
     setDocument(text);
     setDialogueLines(expandedLines)
     setRangeList([])
-    setSalientInfo([])
    };
 
   useEffect(() => {
@@ -76,7 +71,6 @@ function Rate() {
    }, []);
 
   let handleSubmit = async () => {
-
     const summaryRef = doc(db, 'summaries', document.fname);
     let summaries = []
     for (let j = 0; j < 3; j++) {
@@ -116,7 +110,7 @@ function Rate() {
           vals.push(val)
         }
         if (vals.length!=0) {
-          salientInfo.push(vals)
+          salientInfo = [...salientInfo, ...vals]
         }
       }
       // console.log(salientInfo)
@@ -127,7 +121,7 @@ function Rate() {
       fname: document.fname,
       summary: summaries
     }, { merge: true });
-
+    console.log(salientInfo)
     const docRef = await addDoc(collection(db, "responses"), {
       salientInfo: salientInfo,
       scores: {
@@ -187,37 +181,6 @@ function Rate() {
       2: 'B mostly better'
   };
 
-  function customRenderer(currentRenderedNodes, currentRenderedRange, currentRenderedIndex, onMouseOverHighlightedWord) {
-    return tooltipRenderer(currentRenderedNodes, currentRenderedRange, currentRenderedIndex, onMouseOverHighlightedWord);
-  }
-
-  function tooltipRenderer(lettersNode, range, rangeIndex, onMouseOverHighlightedWord) {
-    console.log(range.data.id, rangeIndex)
-    return (<Tooltip key={`${range.data.id}-${rangeIndex}`} onVisibleChange={onMouseOverHighlightedWord}
-                        placement="top"
-                        overlay={<button type="primary" onClick={() => resetHightlight(range)} >Reset Highlight</button>}
-                        defaultVisible={true}
-                        animation="zoom">
-        <span>{lettersNode}</span>
-    </Tooltip>);
-  }
-
-  function resetHightlight(range) {
-    console.log(range)
-    for (let i = 0; i < dialogueLines.length; i++) {
-      console.log(dialogueLines[i])
-      console.log('jflk')
-      const index = dialogueLines[i].indexOf(range);
-      if (index > -1) {
-        dialogueLines[i].splice(index, 1);
-      }
-      for (let j = 1; j < dialogueLines[i]-1; j++) {
-        salientInfo.push(dialogueLines[i][j].text)
-      }
-    }
-
-  }
-
 
   let undoHighlight = () => {
     let newdialogline = undefined
@@ -262,7 +225,7 @@ function Rate() {
   // console.log(document)
   
   return (
-    <div className="App">
+    <div className="Rate">
       <div>
         <h2>Please Highlight the Dialogue below!</h2>
         <h4>Please do not highlight more that one line together:</h4>
@@ -330,10 +293,8 @@ function Rate() {
               ))}
               <div className="finalbutton">         <Button type="primary" onClick={handleSubmit} >Submit Results</Button>
  </div>
-
       </div>
       }
-      
         {/* <Slider  min={1} marks={marks('Coherence')} step={null} onChange={criteriaChangeFunctions['Coherence']} defaultValue={-1} /> */} 
     </div>
   );

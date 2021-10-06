@@ -79,6 +79,12 @@
   }
 }
 
+.Rate {
+  display:flex;
+  flex-direction: column;
+  padding: 2%;
+}
+
 .Summaries{
   display: flex;
   flex-direction: row;

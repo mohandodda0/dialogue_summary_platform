@@ -44,7 +44,7 @@ function App() {
             <Menu.Item key="welcome"><Link to="/"> Set Name </Link></Menu.Item>
             <Menu.Item key="rate" disabled={!nameSet}><Link to="/rate"> Rate Summaries </Link></Menu.Item>
             <Menu.Item key="info"><Link to="/info">Information about Grading </Link></Menu.Item>
-            {/* <Menu.Item key="prevrated" disabled={!nameSet}><Link to="/prevrated">Previously Rated</Link></Menu.Item> */}
+            <Menu.Item key="prevrated" disabled={!nameSet}><Link to="/prevrated">Previously Rated</Link></Menu.Item>
             {/* <SubMenu title="SubMenu">
               <Menu.Item>SubMenuItem</Menu.Item>
             </SubMenu> */}

@@ -239,7 +239,7 @@ function Rate() {
   return (
     <div className="Rate">
       <div>
-        <h2>Please Highlight the Dialogue below!</h2>
+        <h2>Hello {name}! Please Highlight the Dialogue below!</h2>
         <h4>Please do not highlight more that one line together:</h4>
       </div>
       {
@@ -287,12 +287,12 @@ function Rate() {
         <div className="Summaries" >
           <div className="SummaryVal">
             <div><h2>Summary A</h2></div>
-            
-            {document.summary1}
+              {document.summary1}
             </div>
-          <div>
-          <div className="SummaryVal"><h2>Summary B</h2></div>
-            {document.summary2}
+          
+          <div className="SummaryVal">
+            <div><h2>Summary B</h2></div>
+              {document.summary2}
             </div>
         </div>
         {criterias.map((criteria) => (

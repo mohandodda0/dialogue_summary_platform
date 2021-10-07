@@ -48,6 +48,20 @@
 }
 
 
+.App h3 {
+  /* position: absolute; */
+  /* width: 201px;
+  height: 65px;
+  left: 120px;
+  top: 125px; */
+  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-style: normal;
+/*    font-weight: 800;*/
+  font-size: 22px;
+  /* line-height: 65px; */
+}
+
+
 .App h4 {
   /* position: absolute; */
   /* width: 201px;

@@ -17,6 +17,7 @@ import { Menu } from 'antd';
 
 function App() {
   let [nameSet, setNameSet] = useState(false)
+  // let [name, setName] = useState("")
 
 
   // let location = useLocation()
@@ -29,8 +30,9 @@ function App() {
 
 
   useEffect(() => {
-    if (localStorage.getItem("name")) {
+    if (localStorage.getItem("name")   && localStorage.getItem('name')!="") {
       setNameSet(true)
+      // setName(localStorage.getItem("name") )
     }
   }, []);
 
@@ -62,7 +64,7 @@ function App() {
               <PrevRated />
             </Route>
             <Route path="/">
-              <Welcome setNameSet={setNameSet}/>
+              <Welcome setNameSet={setNameSet} />
             </Route>
           </Switch>
         </div>

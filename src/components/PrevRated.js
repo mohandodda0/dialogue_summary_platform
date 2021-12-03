@@ -121,7 +121,7 @@ function PrevRated() {
   return (
     <div className="Rate">
       <div>
-        <h2>{name}'s Previously Rated Dialogue</h2>
+        <h2>{name}'s Previously Rated Dialogues</h2>
         <h3>Your Results for Particular Dialogue</h3>
         </div>
         

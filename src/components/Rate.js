@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Slider, { Range } from 'rc-slider';
 import Tooltip from 'rc-tooltip';
 import Highlightable from 'highlightable';
-import jsonData from '../data/dialogsumdata.json';
+// import jsonData from '../data/dialogsumdata.json';
+import jsonData from '../data/dialogsumtraincombined.json';
+
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import 'rc-slider/assets/index.css';
@@ -17,7 +19,8 @@ import '../App.css';
 function Rate() {
   let [document, setDocument] = useState({})
   let [dialogueLines, setDialogueLines] = useState([])
-  let [criteriaScores, setCriteriaScores] = useState({'Coherence':0, 'Accuracy':0, 'Coverage':0, 'Concise':0, 'Overall Quality':0})
+  let [criteriaScores, setCriteriaScores] = useState({})
+  // let [criteriaScoresList, setCriteriaScoresList] = useState([])
   let [annotating, setAnnotating] = useState(true)
   // let [highlightsLeft, setHighlightsLeft] = useState({'Salient Information':  })
   let [color, setColor] = useState('#ffcc80')
@@ -26,6 +29,8 @@ function Rate() {
   const location = useLocation();
   let history = useHistory();
   console.log(localStorage.getItem('name'))
+  let [summaryPairs, setSummaryPairs] = useState([])
+  const summarymodels = ['Salesforce/bart-large-xsum-samsum', 'philschmid/distilbart-cnn-12-6-samsum', 'henryu-lin/t5-large-samsum-deepspeed', 'jpcorb20/pegasus-large-reddit_tifu-samsum-256', 'knkarthick/meeting-summary-samsum']
   // if (!location.state || !location.state.name || location.state.name=="") {
   //   console.log('no name!!!1')
   //   history.push("/")
@@ -57,6 +62,7 @@ function Rate() {
 
   const getDocument = async () => {
     let texts = JSON.parse(JSON.stringify(jsonData))
+    texts = texts.slice(0,100)
     let text = texts[Math.floor(Math.random() * texts.length)]
     // text = texts[0]  
     let lines = text.dialogue.split("\n")
@@ -69,6 +75,28 @@ function Rate() {
     setDocument(text);
     setDialogueLines(expandedLines)
     setRangeList([])
+    const myset = new Set()
+    while (myset.size!=4) {
+      let bucket = [0,1,2,3,4]
+      let randomIndex1 = Math.floor(Math.random()*bucket.length);
+      bucket.splice(randomIndex1, 1);
+      let randomIndex2 = Math.floor(Math.random()*bucket.length);
+      if (randomIndex2>randomIndex1) {
+        myset.add(randomIndex1+' '+randomIndex2)
+      } else {
+        myset.add(randomIndex2+' '+randomIndex1)
+      }
+
+    }
+    let out = []
+    myset.forEach(pair => {
+      let vals = pair.split(" ").map(Number);
+      out.push(vals)
+    });
+    console.log(text)
+    console.log(expandedLines)
+    setSummaryPairs(out)
+
    };
 
   useEffect(() => {
@@ -136,55 +164,91 @@ function Rate() {
     }, { merge: true });
     console.log(salientInfo)
     console.log(salientInfoAll)
+    // let responsesdoc = {
+    //   salientInfo: salientInfo,
+    //   salientInfoAll: salientInfoAll,
+    //   scores: {
+    //     Coherence: criteriaScores['Coherence'],
+    //     Accuracy: criteriaScores['Accuracy'],
+    //     Coverage: criteriaScores['Coverage'],
+    //     Concise: criteriaScores['Concise'],
+    //     "Overall Quality": criteriaScores['Overall Quality']
+    //   },
+    //   summary:  summaryRef,
+    //   name: name
+    // }
     const docRef = await addDoc(collection(db, "responses"), {
       salientInfo: salientInfo,
       salientInfoAll: salientInfoAll,
-      scores: {
-        Coherence: criteriaScores['Coherence'],
-        Accuracy: criteriaScores['Accuracy'],
-        Coverage: criteriaScores['Coverage'],
-        Concise: criteriaScores['Concise'],
-        "Overall Quality": criteriaScores['Overall Quality']
-      },
+      scores: criteriaScores,
+      // scores: {
+      //   Coherence: criteriaScores['Coherence'],
+      //   Accuracy: criteriaScores['Accuracy'],
+      //   Coverage: criteriaScores['Coverage'],
+      //   Concise: criteriaScores['Concise'],
+      //   "Overall Quality": criteriaScores['Overall Quality']
+      // },
       summary:  summaryRef,
       name: name
     });
 
- 
 
 
     setAnnotating(true)
-    setCriteriaScores({'Coherence':-1, 'Accuracy':-1, 'Coverage':-1, 'Concise':-1, 'Overall Quality':-1})
+    // setCriteriaScores({'Coherence':-1, 'Accuracy':-1, 'Coverage':-1, 'Concise':-1, 'Overall Quality':-1})
+    setCriteriaScores({})
     getDocument()
   }
 
-  let callbackSetCoherence = (value) => {
+  let setScore = (value, criteria, pair) => {
+    // console.log(value, criteria, pair)
     let currScores = criteriaScores
-    currScores['Coherence'] = value
+    // currScores[criteria] = value
+    // let criterialist = criteriaScoresList
+    let key = summarymodels[pair[0]]+' vs ' +summarymodels[pair[1]]
+    let passed = false
+    Object.keys(currScores).forEach((checkkey) => {
+      if (checkkey==key) {
+        currScores[key][criteria] = value
+        passed = true
+      }
+    })
+    if (!passed) {
+      currScores[key] = {'Coherence':0, 'Accuracy':0, 'Coverage':0, 'Concise':0, 'Overall Quality':0}
+      currScores[key][criteria] = value
+    }
+    console.log(currScores)
+    // setCriteriaScoresList(criterialist)
     setCriteriaScores(currScores)
   }
-  let callbackSetAccuracy = (value) => {
-    let currScores = criteriaScores
-    currScores['Accuracy'] = value
-    setCriteriaScores(currScores)
-  }
-  let callbackSetCoverage = (value) => {
-    let currScores = criteriaScores
-    currScores['Coverage'] = value
-    setCriteriaScores(currScores)
-  }
-  let callbackSetConcise = (value) => {
-    let currScores = criteriaScores
-    currScores['Concise'] = value
-    setCriteriaScores(currScores)
-  }
-  let callbackSetOverall = (value) => {
-    let currScores = criteriaScores
-    currScores['Overall Quality'] = value
-    setCriteriaScores(currScores)
-  }
+
+  // let callbackSetCoherence = (value) => {
+  //   let currScores = criteriaScores
+  //   currScores['Coherence'] = value
+  //   setCriteriaScores(currScores)
+  // }
+  // let callbackSetAccuracy = (value) => {
+  //   let currScores = criteriaScores
+  //   currScores['Accuracy'] = value
+  //   setCriteriaScores(currScores)
+  // }
+  // let callbackSetCoverage = (value) => {
+  //   let currScores = criteriaScores
+  //   currScores['Coverage'] = value
+  //   setCriteriaScores(currScores)
+  // }
+  // let callbackSetConcise = (value) => {
+  //   let currScores = criteriaScores
+  //   currScores['Concise'] = value
+  //   setCriteriaScores(currScores)
+  // }
+  // let callbackSetOverall = (value) => {
+  //   let currScores = criteriaScores
+  //   currScores['Overall Quality'] = value
+  //   setCriteriaScores(currScores)
+  // }
   let criterias = ['Coherence', 'Accuracy', 'Coverage', 'Concise', 'Overall Quality']
-  let criteriaChangeFunctions = {'Coherence':callbackSetCoherence, 'Accuracy':callbackSetAccuracy, 'Coverage':callbackSetCoverage, 'Concise':callbackSetConcise, 'Overall Quality':callbackSetOverall}
+  // let criteriaChangeFunctions = {'Coherence':callbackSetCoherence, 'Accuracy':callbackSetAccuracy, 'Coverage':callbackSetCoverage, 'Concise':callbackSetConcise, 'Overall Quality':callbackSetOverall}
   
   let marks= {
       "-2": ' A mostly better',
@@ -215,7 +279,6 @@ function Rate() {
       }
 
     }
-
   }
 
   let onMouseOverHighlightedWordCallback = (range) => {}
@@ -226,7 +289,6 @@ function Rate() {
         range.data.highlightStyle ={
           backgroundColor: color
         }
-
         line.push(range)
       }
       newDialogueLines.push(line)
@@ -261,7 +323,7 @@ function Rate() {
             }}
             text={line[0] || ""}
           />
-          : <></>}
+          : <>hi</>}
           </div>
         ) ) }
         </div>
@@ -269,7 +331,7 @@ function Rate() {
           <button type="primary" onClick={() => undoHighlight(color)} > Undo Highlight </button>
         </div>
         </div> 
-        : <></>
+        : <>hi2</>
       }
 
       {
@@ -282,30 +344,42 @@ function Rate() {
       }
    
       {annotating ?  <></>:
-        
-        <div className="finalbutton"> 
-        <div className="Summaries" >
-          <div className="SummaryVal">
-            <div><h2>Summary A</h2></div>
-              {document.summary1}
-            </div>
-          
-          <div className="SummaryVal">
-            <div><h2>Summary B</h2></div>
-              {document.summary2}
-            </div>
-        </div>
-        {criterias.map((criteria) => (
-                      <div className="ratings">
-                        <div className="ratingstext">
-                            <h3>Please compare the two above summaries in regards to their {criteria}</h3>
-                        </div>
-                      <Slider  min={-2} max={2} marks={marks} step={null} onChange={criteriaChangeFunctions[criteria]} defaultValue={0} />
-                      </div>
-              ))}
-              <div className="finalbutton">         <Button type="primary" onClick={handleSubmit} >Submit Results</Button>
- </div>
-      </div>
+
+       <>
+        {
+         summaryPairs.map((pair, index) =>
+
+         <div className="finalbutton"> 
+
+         <div className="Summaries" >
+           <div className="SummaryVal">
+             <div><h2>Summary A</h2></div>
+               {document['summary'+summarymodels[pair[0]]]}
+             </div>
+           
+           <div className="SummaryVal">
+             <div><h2>Summary B</h2></div>
+               {document['summary'+summarymodels[pair[1]]]}
+             </div>
+         </div>
+         {criterias.map((criteria) => (
+                       <div className="ratings">
+                         <div className="ratingstext">
+                             <h3>Please compare the two above summaries in regards to their {criteria}</h3>
+                         </div>
+                         <Slider  min={-2} max={2} marks={marks} step={null} onChange={(value) => setScore(value, criteria, pair)} defaultValue={0} />
+                       {/* <Slider  min={-2} max={2} marks={marks} step={null} onChange={criteriaChangeFunctions[criteria]} defaultValue={0} /> */}
+                       </div>
+               ))}
+               
+       </div>
+
+         )
+       }
+       <div className="finalbutton">         <Button type="primary" onClick={handleSubmit} >Submit Results</Button>
+  </div>
+      </>
+      
       }
         {/* <Slider  min={1} marks={marks('Coherence')} step={null} onChange={criteriaChangeFunctions['Coherence']} defaultValue={-1} /> */} 
     </div>

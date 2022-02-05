@@ -62,7 +62,7 @@ function Rate() {
 
   const getDocument = async () => {
     let texts = JSON.parse(JSON.stringify(jsonData))
-    texts = texts.slice(0,100)
+    texts = texts.slice(0,1039)
     let text = texts[Math.floor(Math.random() * texts.length)]
     // text = texts[0]  
     let lines = text.dialogue.split("\n")

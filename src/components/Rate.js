@@ -179,6 +179,7 @@ function Rate() {
 
 
       await setDoc(summaryRef, {
+      dialogue: document.dialogue,
       fname: document.fname,
       evaluated: true
     }, { merge: true });

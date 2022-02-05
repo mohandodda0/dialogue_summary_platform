@@ -28,9 +28,9 @@ function Rate() {
   let [name, setName] = useState("")
   const location = useLocation();
   let history = useHistory();
-  console.log(localStorage.getItem('name'))
+  // console.log(localStorage.getItem('name'))
   let [summaryPairs, setSummaryPairs] = useState([])
-  const summarymodels = ['Salesforce/bart-large-xsum-samsum', 'philschmid/distilbart-cnn-12-6-samsum', 'henryu-lin/t5-large-samsum-deepspeed', 'jpcorb20/pegasus-large-reddit_tifu-samsum-256', 'knkarthick/meeting-summary-samsum']
+  const summarymodels = ['Salesforce/bart-large-xsum-samsum', 'philschmid/distilbart-cnn-12-6-samsum', 'henryu-lin/t5-large-samsum-deepspeed', 'linydub/bart-large-samsum', 'knkarthick/meeting-summary-samsum']
   // if (!location.state || !location.state.name || location.state.name=="") {
   //   console.log('no name!!!1')
   //   history.push("/")
@@ -41,16 +41,20 @@ function Rate() {
   //   console.log('no name!!!1')
   //   history.push("/")
   // }
-
+  
   // '#ffcc80'
 
 
   useEffect(() => {
+    // if (!location.state || !location.state.name || location.state.name=="") {
+    //   console.log('no name!!!1')
+    //   history.push("/")
+    // }
 
     if (localStorage.getItem('name') && localStorage.getItem('name')!="") {
       setName(localStorage.getItem('name'))
     } else {
-      console.log('no name!!!1')
+      // console.log('no name!!!1')
       history.push("/")
     }
 
@@ -58,32 +62,9 @@ function Rate() {
 
   const getDocument = async () => {
     let texts = JSON.parse(JSON.stringify(jsonData))
-    texts = texts.slice(0,1039)
+    texts = texts.slice(0,100)
     let text = texts[Math.floor(Math.random() * texts.length)]
-
-    // const summaryref = collection(db, "summaries");
-    // let q = query(summaryref, where("evaluated", "==", false));
-    // let querySnapshot = await getDocs(q);
-    // let lines;
-    // let fnameindex;
-    // if(!querySnapshot.empty) {
-    //   let firebasetexts = querySnapshot.docs
-    //   let val = firebasetexts[Math.floor(Math.random() * firebasetexts.length)].data()
-    //   lines = val.dialogue.split("\n")
-    //   fnameindex = parseInt(val.fname.split("_")[1])
-    //   // let text = querySnapshot.docs[0].data()
-    //   // rest of your code 
-    // } else {
-    //   q = query(summaryref, where("evaluated", "==", true));
-    //   querySnapshot = await getDocs(q);
-    //   // let text = querySnapshot.docs[0].data()
-    //   let firebasetexts = querySnapshot.docs
-    //   let val = firebasetexts[Math.floor(Math.random() * firebasetexts.length)].data()
-    //   lines = val.dialogue.split("\n")
-    //   fnameindex = parseInt(val.fname.split("_")[1])
-    // }
-    // let text = texts[fnameindex]
-
+    // text = texts[0]  
     let lines = text.dialogue.split("\n")
     let expandedLines = []
     lines.forEach(line => {
@@ -95,18 +76,18 @@ function Rate() {
     setDialogueLines(expandedLines)
     setRangeList([])
     const myset = new Set()
-    
-    while (myset.size!=4) {
-      let bucket = [0,1,2,3,4]
+    // while (myset.size!=4) {
+    for (let i = 0; i  < 4; i++) {
+      let bucket = [0,1,3,4]
       let randomIndex1 = Math.floor(Math.random()*bucket.length);
-      bucket.splice(randomIndex1, 1);
+      let randnum1 = bucket.splice(randomIndex1, 1)[0];
       let randomIndex2 = Math.floor(Math.random()*bucket.length);
-      if (summarymodels[randomIndex1] in text && summarymodels[randomIndex2] in text) {
-        if (randomIndex2>randomIndex1) {
-          myset.add(randomIndex1+' '+randomIndex2)
-        } else {
-          myset.add(randomIndex2+' '+randomIndex1)
-        }
+      let randnum2 = bucket.splice(randomIndex2, 1)[0];
+      console.log(randnum2, randnum1)
+      if (randnum2>randnum1) {
+        myset.add(randnum1+' '+randnum2)
+      } else {
+        myset.add(randnum2+' '+randnum1)
       }
     }
     let out = []
@@ -114,8 +95,8 @@ function Rate() {
       let vals = pair.split(" ").map(Number);
       out.push(vals)
     });
-    console.log(text)
-    console.log(expandedLines)
+    // console.log(text)
+    // console.log(expandedLines)
     setSummaryPairs(out)
 
    };
@@ -181,10 +162,10 @@ function Rate() {
       await setDoc(summaryRef, {
       dialogue: document.dialogue,
       fname: document.fname,
-      evaluated: true
+      summary: summaries
     }, { merge: true });
-    console.log(salientInfo)
-    console.log(salientInfoAll)
+    // console.log(salientInfo)
+    // console.log(salientInfoAll)
     // let responsesdoc = {
     //   salientInfo: salientInfo,
     //   salientInfoAll: salientInfoAll,
@@ -238,7 +219,7 @@ function Rate() {
       currScores[key] = {'Coherence':0, 'Accuracy':0, 'Coverage':0, 'Concise':0, 'Overall Quality':0}
       currScores[key][criteria] = value
     }
-    console.log(currScores)
+    // console.log(currScores)
     // setCriteriaScoresList(criterialist)
     setCriteriaScores(currScores)
   }

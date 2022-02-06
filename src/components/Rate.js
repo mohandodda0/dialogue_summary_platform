@@ -77,7 +77,7 @@ function Rate() {
     setRangeList([])
     const myset = new Set()
     // while (myset.size!=4) {
-    for (let i = 0; i  < 4; i++) {
+    for (let i = 0; i < 4; i++) {
       let bucket = [0,1,3,4]
       let randomIndex1 = Math.floor(Math.random()*bucket.length);
       let randnum1 = bucket.splice(randomIndex1, 1)[0];
@@ -162,7 +162,9 @@ function Rate() {
       await setDoc(summaryRef, {
       dialogue: document.dialogue,
       fname: document.fname,
-      summary: summaries
+      summary: summaries,
+      evaluated: true
+      
     }, { merge: true });
     // console.log(salientInfo)
     // console.log(salientInfoAll)

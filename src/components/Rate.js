@@ -107,13 +107,13 @@ function Rate() {
 
   let handleSubmit = async () => {
     const summaryRef = doc(db, 'summaries', document.fname);
-    let summaries = []
-    for (let j = 0; j < 3; j++) {
-        let summary = document["summary"+(j+1).toString()]
-        if (summary) {
-          summaries.push(summary)
-        }
-    }
+    // let summaries = []
+    // for (let j = 0; j < 3; j++) {
+    //     let summary = document["summary"+(j+1).toString()]
+    //     if (summary) {
+    //       summaries.push(summary)
+    //     }
+    // }
     let salientInfo = []
     let salientInfoAll = []
     for (let i = 0; i < dialogueLines.length; i++) {
@@ -162,7 +162,7 @@ function Rate() {
       await setDoc(summaryRef, {
       dialogue: document.dialogue,
       fname: document.fname,
-      summary: summaries,
+      // summary: summaries,
       evaluated: true
       
     }, { merge: true });

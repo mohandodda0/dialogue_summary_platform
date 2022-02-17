@@ -62,7 +62,7 @@ function Rate() {
 
   const getDocument = async () => {
     let texts = JSON.parse(JSON.stringify(jsonData))
-    texts = texts.slice(0,1039)
+    // texts = texts.slice(0,1039)
     let text = texts[Math.floor(Math.random() * texts.length)]
     // text = texts[0]  
     let lines = text.dialogue.split("\n")
@@ -76,8 +76,8 @@ function Rate() {
     setDialogueLines(expandedLines)
     setRangeList([])
     const myset = new Set()
-    // while (myset.size!=4) {
-    for (let i = 0; i < 4; i++) {
+    while (myset.size<3) {
+    // for (let i = 0; i < 4; i++) {
       let bucket = [0,1,3,4]
       let randomIndex1 = Math.floor(Math.random()*bucket.length);
       let randnum1 = bucket.splice(randomIndex1, 1)[0];
@@ -95,6 +95,7 @@ function Rate() {
       let vals = pair.split(" ").map(Number);
       out.push(vals)
     });
+    console.log(out)
     // console.log(text)
     // console.log(expandedLines)
     setSummaryPairs(out)

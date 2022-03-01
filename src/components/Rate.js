@@ -20,6 +20,7 @@ function Rate() {
   let [document, setDocument] = useState({})
   let [dialogueLines, setDialogueLines] = useState([])
   let [criteriaScores, setCriteriaScores] = useState({})
+  let [gradingTestAnnotation, setGradingTestAnnotation] = useState(false)
   // let [criteriaScoresList, setCriteriaScoresList] = useState([])
   let [annotating, setAnnotating] = useState(true)
   // let [highlightsLeft, setHighlightsLeft] = useState({'Salient Information':  })
@@ -31,28 +32,13 @@ function Rate() {
   // console.log(localStorage.getItem('name'))
   let [summaryPairs, setSummaryPairs] = useState([])
   const summarymodels = ['Salesforce/bart-large-xsum-samsum', 'philschmid/distilbart-cnn-12-6-samsum', 'henryu-lin/t5-large-samsum-deepspeed', 'linydub/bart-large-samsum', 'knkarthick/meeting-summary-samsum']
-  // if (!location.state || !location.state.name || location.state.name=="") {
-  //   console.log('no name!!!1')
-  //   history.push("/")
-  // }
-  // if (localStorage.getItem('name') && localStorage.getItem('name')!="") {
-  //   setName(localStorage.getItem('name'))
-  // } else {
-  //   console.log('no name!!!1')
-  //   history.push("/")
-  // }
-  
-  // '#ffcc80'
+  const testannotations = [24, 25, 26, 27, 28, 29, 30, 31, 32, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44]
 
 
   useEffect(() => {
-    // if (!location.state || !location.state.name || location.state.name=="") {
-    //   console.log('no name!!!1')
-    //   history.push("/")
-    // }
-
     if (localStorage.getItem('name') && localStorage.getItem('name')!="") {
       setName(localStorage.getItem('name'))
+      getDocument();
     } else {
       // console.log('no name!!!1')
       history.push("/")
@@ -62,59 +48,76 @@ function Rate() {
 
   const getDocument = async () => {
     let texts = JSON.parse(JSON.stringify(jsonData))
+    let localname = localStorage.getItem('name')
+    console.log(localname)
+    console.log(name)
+    const annotatorRef = doc(db, 'annotators', localname);
+    console.log(annotatorRef)
+    let annotatorDoc = await getDoc(annotatorRef)
+    let annotatorData;
+    if (annotatorDoc.exists()) {
+      console.log("Document data:", annotatorDoc.data());
+      annotatorData = annotatorDoc.data()
+    } else {
+      await setDoc(annotatorRef, { name: localname, testannotations: [] }, { merge: true })
+      annotatorData = { name: localname, testannotations: [] }
+    }
+
+    let text;
+    console.log(annotatorData)
+    let testannotationlength = annotatorData.testannotations.length
+    console.log(testannotationlength)
+    if (testannotationlength<20) {
+      text = texts[testannotations[testannotationlength]]
+      setGradingTestAnnotation(true)
+    } else {
+      text = texts[Math.floor(Math.random() * texts.length)]
+      setGradingTestAnnotation(false)
+    }
     // texts = texts.slice(0,1039)
-    let text = texts[Math.floor(Math.random() * texts.length)]
-    // text = texts[0]  
+    // let text = texts[Math.floor(Math.random() * texts.length)]
+    
     let lines = text.dialogue.split("\n")
     let expandedLines = []
     lines.forEach(line => {
       expandedLines.push([line])
     });
-    // console.log(text)
-    // console.log(expandedLines)
+
     setDocument(text);
     setDialogueLines(expandedLines)
     setRangeList([])
-    const myset = new Set()
-    while (myset.size<3) {
-    // for (let i = 0; i < 4; i++) {
-      let bucket = [0,1,3,4]
-      let randomIndex1 = Math.floor(Math.random()*bucket.length);
-      let randnum1 = bucket.splice(randomIndex1, 1)[0];
-      let randomIndex2 = Math.floor(Math.random()*bucket.length);
-      let randnum2 = bucket.splice(randomIndex2, 1)[0];
-      console.log(randnum2, randnum1)
-      if (randnum2>randnum1) {
-        myset.add(randnum1+' '+randnum2)
-      } else {
-        myset.add(randnum2+' '+randnum1)
-      }
-    }
-    let out = []
-    myset.forEach(pair => {
-      let vals = pair.split(" ").map(Number);
-      out.push(vals)
-    });
-    console.log(out)
-    // console.log(text)
-    // console.log(expandedLines)
+    // const myset = new Set()
+    // while (myset.size<3) {
+    //   let bucket = [0,1,3,4]
+    //   let randomIndex1 = Math.floor(Math.random()*bucket.length);
+    //   let randnum1 = bucket.splice(randomIndex1, 1)[0];
+    //   let randomIndex2 = Math.floor(Math.random()*bucket.length);
+    //   let randnum2 = bucket.splice(randomIndex2, 1)[0];
+    //   console.log(randnum2, randnum1)
+    //   if (randnum2>randnum1) {
+    //     myset.add(randnum1+' '+randnum2)
+    //   } else {
+    //     myset.add(randnum2+' '+randnum1)
+    //   }
+    // }
+    
+    // let out = []
+    // myset.forEach(pair => {
+    //   let vals = pair.split(" ").map(Number);
+    //   out.push(vals)
+    // });
+    let out = [[0,3], [1,4], [3,4]]
     setSummaryPairs(out)
-
+    console.log(out, text)
    };
 
-  useEffect(() => {
-     getDocument();
-   }, []);
+  // useEffect(() => {
+  //    getDocument();
+  //  }, []);
 
   let handleSubmit = async () => {
+    let currScores = criteriaScores
     const summaryRef = doc(db, 'summaries', document.fname);
-    // let summaries = []
-    // for (let j = 0; j < 3; j++) {
-    //     let summary = document["summary"+(j+1).toString()]
-    //     if (summary) {
-    //       summaries.push(summary)
-    //     }
-    // }
     let salientInfo = []
     let salientInfoAll = []
     for (let i = 0; i < dialogueLines.length; i++) {
@@ -135,7 +138,6 @@ function Rate() {
           if (intervals[j].start <= newintervals[newintervals.length-1].end) {
             newintervals[newintervals.length-1].end = Math.max( newintervals[newintervals.length-1].end, intervals[j].end)
           } else {
-            // newintervals.push(intervals[j])
             newintervals.push({
               ...intervals[j],
               lineno: i
@@ -147,7 +149,6 @@ function Rate() {
         let vals2 = []
         for (let j = 0; j <newintervals.length; j++) {
           let val = newintervals[j].data.text.slice(newintervals[j].start, newintervals[j].end + 1)
-          // console.log(val)
           vals.push(val)
           delete newintervals[j]['data'];
           vals2.push(newintervals[j])
@@ -157,7 +158,6 @@ function Rate() {
           salientInfoAll = [...salientInfoAll, ...vals2]
         }
       }
-      // console.log(salientInfo)
 
 
       await setDoc(summaryRef, {
@@ -167,37 +167,46 @@ function Rate() {
       evaluated: true
       
     }, { merge: true });
-    // console.log(salientInfo)
-    // console.log(salientInfoAll)
-    // let responsesdoc = {
-    //   salientInfo: salientInfo,
-    //   salientInfoAll: salientInfoAll,
-    //   scores: {
-    //     Coherence: criteriaScores['Coherence'],
-    //     Accuracy: criteriaScores['Accuracy'],
-    //     Coverage: criteriaScores['Coverage'],
-    //     Concise: criteriaScores['Concise'],
-    //     "Overall Quality": criteriaScores['Overall Quality']
-    //   },
-    //   summary:  summaryRef,
-    //   name: name
-    // }
+
+    summaryPairs.forEach((pair) => {
+      let key = summarymodels[pair[0]]+' vs ' +summarymodels[pair[1]]
+      if (!(key in currScores)) {
+        currScores[key] = {'Coherence':0, 'Accuracy':0, 'Coverage':0, 'Concise':0, 'Overall Quality':0}
+      }
+    });
+
     const docRef = await addDoc(collection(db, "responses"), {
       salientInfo: salientInfo,
       salientInfoAll: salientInfoAll,
-      scores: criteriaScores,
-      // scores: {
-      //   Coherence: criteriaScores['Coherence'],
-      //   Accuracy: criteriaScores['Accuracy'],
-      //   Coverage: criteriaScores['Coverage'],
-      //   Concise: criteriaScores['Concise'],
-      //   "Overall Quality": criteriaScores['Overall Quality']
-      // },
+      scores: currScores,
       summary:  summaryRef,
       name: name
     });
 
+    if (gradingTestAnnotation) {
+      console.log(name)
+      const annotatorRef = doc(db, 'annotators', name);
+      let annotatorDoc = await getDoc(annotatorRef)
+      let annotatorData;
+      if (annotatorDoc.exists()) {
+        console.log("Document data:", annotatorDoc.data());
+        annotatorData = annotatorDoc.data()
+        let oldtestannotations = annotatorData.testannotations
+        console.log(annotatorData)
+        oldtestannotations.push({
+          fname: document.fname,
+          scores: currScores,
+          salientInfo: salientInfo,
+          salientInfoAll: salientInfoAll
+        })
+        console.log(oldtestannotations)
+        await setDoc(annotatorRef, {
+          name: name,
+          testannotations: oldtestannotations
+        }, {merge: true})
+      } 
 
+    }
 
     setAnnotating(true)
     // setCriteriaScores({'Coherence':-1, 'Accuracy':-1, 'Coverage':-1, 'Concise':-1, 'Overall Quality':-1})
@@ -227,31 +236,6 @@ function Rate() {
     setCriteriaScores(currScores)
   }
 
-  // let callbackSetCoherence = (value) => {
-  //   let currScores = criteriaScores
-  //   currScores['Coherence'] = value
-  //   setCriteriaScores(currScores)
-  // }
-  // let callbackSetAccuracy = (value) => {
-  //   let currScores = criteriaScores
-  //   currScores['Accuracy'] = value
-  //   setCriteriaScores(currScores)
-  // }
-  // let callbackSetCoverage = (value) => {
-  //   let currScores = criteriaScores
-  //   currScores['Coverage'] = value
-  //   setCriteriaScores(currScores)
-  // }
-  // let callbackSetConcise = (value) => {
-  //   let currScores = criteriaScores
-  //   currScores['Concise'] = value
-  //   setCriteriaScores(currScores)
-  // }
-  // let callbackSetOverall = (value) => {
-  //   let currScores = criteriaScores
-  //   currScores['Overall Quality'] = value
-  //   setCriteriaScores(currScores)
-  // }
   let criterias = ['Coherence', 'Accuracy', 'Coverage', 'Concise', 'Overall Quality']
   // let criteriaChangeFunctions = {'Coherence':callbackSetCoherence, 'Accuracy':callbackSetAccuracy, 'Coverage':callbackSetCoverage, 'Concise':callbackSetConcise, 'Overall Quality':callbackSetOverall}
   
@@ -306,8 +290,9 @@ function Rate() {
   return (
     <div className="Rate">
       <div>
-        <h2>Hello {name}! Please Highlight the Dialogue below!</h2>
-        <h4>Please do not highlight more that one line together:</h4>
+        <h2>Hello {name}! Please Highlight Dialogue <em>{document.fname}</em> below!</h2>
+        <h4>Please do not highlight multiple lines in one highlight.</h4>
+
       </div>
       {
         dialogueLines ? 

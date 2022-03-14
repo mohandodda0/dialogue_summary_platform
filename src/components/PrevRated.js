@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Slider, { Range } from 'rc-slider';
 import Tooltip from 'rc-tooltip';
 import Highlightable from 'highlightable';
-import jsonData from '../data/dialogsumdata.json';
+import jsonData from '../data/dialogsumtraincombined.json';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import 'rc-slider/assets/index.css';
@@ -31,8 +31,9 @@ function PrevRated() {
   let [page, setPage] = useState(1)
   let [summaryPairs, setSummaryPairs] = useState([])
   let [allScores, setAllScores] = useState([])
+  let [fname, setFnames] = useState([])
   const summarymodels = ['Salesforce/bart-large-xsum-samsum', 'philschmid/distilbart-cnn-12-6-samsum', 'henryu-lin/t5-large-samsum-deepspeed', 'linydub/bart-large-samsum', 'knkarthick/meeting-summary-samsum']
-  let vs = ['Salesforce/bart-large-xsum-samsum vs linydub/bart-large-samsum', 'Salesforce/bart-large-xsum-samsum vs linydub/bart-large-samsum', 'philschmid/distilbart-cnn-12-6-samsum vs knkarthick/meeting-summary-samsum']
+  let vs = ['Salesforce/bart-large-xsum-samsum vs linydub/bart-large-samsum', 'linydub/bart-large-samsum vs knkarthick/meeting-summary-samsum', 'philschmid/distilbart-cnn-12-6-samsum vs knkarthick/meeting-summary-samsum']
   const testannotations = [52, 53, 54, 55, 56, 57, 58, 59, 60, 61]
 
   const getDocuments = async () => {
@@ -40,11 +41,14 @@ function PrevRated() {
     // const querySnapshot = await getDocs(stateQuery);
     let localname = localStorage.getItem('name')
     const annotatorRef = doc(db, 'annotators2', localname);
-    console.log(annotatorRef)
+
     let annotatorDoc = await getDoc(annotatorRef)
+    let testanno   = annotatorDoc.data().testannotations
+    console.log(testanno)
     let d = []
-    annotatorDoc.data().testannotations.forEach((doc) => {
-        d.push(doc.data())
+
+    testanno.forEach((doc) => {
+        d.push(doc)
       });
     console.log('lasty', d)
     setAllData(d)
@@ -55,12 +59,13 @@ function PrevRated() {
     let scores = []
     setSummaryPairs(out)
     for (let i = 0; i < d.length; i++) {
-      const docSnap = await getDoc(d[i].summary);
-      let smmrydata = docSnap.data()
-      let arr = smmrydata.fname.split("_")
+      // const docSnap = await getDoc(d[i].summary);
+      // let smmrydata = docSnap.data()
+      let arr = d[i].fname.split("_")
       let fname = arr[arr.length-1]
-      console.log(fname)
+      // console.log(fname)
       let text = texts[parseInt(fname)]
+      // console.log(text)
       let sm = []
       scores.push(d[i].scores)
 
@@ -68,12 +73,8 @@ function PrevRated() {
         let first = text['summary'+summarymodels[pair[0]]]
         let second = text['summary'+summarymodels[pair[1]]]
         let smmry = [first, second]
+        // console.log(first, second)
         sm.push(smmry)
-        // let key = summarymodels[pair[0]]+' vs ' +summarymodels[pair[1]]
-        // let smmry = text[first]
-        // if (!(key in currScores)) {
-        //   currScores[key] = {'Coherence':0, 'Accuracy':0, 'Coverage':0, 'Concise':0, 'Overall Quality':0}
-        // }
       });
       smmrys.push(sm)
 
@@ -90,11 +91,13 @@ function PrevRated() {
       }
       dialogueLinesAll.push(dialogueLines)
     }
-    console.log(dialogueLinesAll)
+    // console.log(dialogueLinesAll)
+    // console.log(scores[1-1][vs[1]])
     setAllDialogueLines(dialogueLinesAll)
     setAllSummaries(smmrys)
     setAllScores(scores)
-    console.log(smmrys, dialogueLinesAll, d)
+    // console.log(smmrys, dialogueLinesAll, d)
+    // console.log('summaries', smmrys)
    };
 
   useEffect(() => {
@@ -142,10 +145,10 @@ function PrevRated() {
     <div className="Rate">
       <div>
         <h2>{name}'s Previously Rated Dialogues</h2>
-        <h3>Your Results for Particular Dialogue</h3>
         </div>
         
         { (allData && allData.length!=0 && allSummaries && allSummaries.length!=0 && allDialogueLines && allDialogueLines.length!=0) ? <> 
+          <h3>Your Results for Particular Dialogue {allData[page-1].fname}</h3>
         <h4>Your Highlighted Salient Information</h4>
       {
         allDialogueLines[page-1] ? 
@@ -173,30 +176,9 @@ function PrevRated() {
         </div> 
         : <></>
       }
-        {/* <div className="finalbutton"> 
-         { (allSummaries && allSummaries[0] && allSummaries[0].length>1)  ? 
-        <div className="Summaries" >
-          <div className="SummaryVal">
-            <div><h2>Summary A</h2></div>
-            {allSummaries[page-1][0]}
-            </div>
-          <div className="SummaryVal"><div><h2>Summary B</h2></div>
-            {allSummaries[page-1][1]}
-            </div>
-        </div>
-        : <></>}
-        {criterias.map((criteria) => (
-                      <div className="ratings">
-                        <div className="ratingstext">
-                            <h3> You gave {criteria} a score of this   {allData[page-1].scores[criteria]}  </h3>
-                        </div>
-                      <Slider  min={-2} max={2} marks={marks} step={null}  value={allData[page-1].scores[criteria] || 0} disabled={true}/>
-                      </div>
-              ))}
-      </div> */}
-
-
-      {
+       
+      { 
+       (allSummaries  && allScores && allScores.length!=0 && allSummaries.length!=0   ) ? 
          summaryPairs.map((pair, index) =>
 
          <div className="finalbutton"> 
@@ -229,6 +211,7 @@ function PrevRated() {
                ))}
        </div>
          )
+          :<></> 
        }
 
       <Pagination simple onChange={onChange} defaultCurrent={1} total={allDialogueLines.length} pageSize={1} />

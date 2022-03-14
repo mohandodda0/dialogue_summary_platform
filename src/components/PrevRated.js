@@ -12,6 +12,8 @@ import { collection, getDocs, doc, setDoc, getDoc, where, query  } from 'firebas
 // import { } from "firebase/firestore"; 
 import { Pagination } from 'antd';
 import { useHistory, useLocation } from "react-router-dom";
+import whichAnnotationsJson from '../config/testannotations.json';
+
 import '../App.css';
 
 function PrevRated() {
@@ -34,8 +36,7 @@ function PrevRated() {
   let [fname, setFnames] = useState([])
   const summarymodels = ['Salesforce/bart-large-xsum-samsum', 'philschmid/distilbart-cnn-12-6-samsum', 'henryu-lin/t5-large-samsum-deepspeed', 'linydub/bart-large-samsum', 'knkarthick/meeting-summary-samsum']
   let vs = ['Salesforce/bart-large-xsum-samsum vs linydub/bart-large-samsum', 'linydub/bart-large-samsum vs knkarthick/meeting-summary-samsum', 'philschmid/distilbart-cnn-12-6-samsum vs knkarthick/meeting-summary-samsum']
-  const testannotations = [52, 53, 54, 55, 56, 57, 58, 59, 60, 61]
-
+  const testannotations = whichAnnotationsJson['annotationsidxs']
   const getDocuments = async () => {
     // const stateQuery = query(collection(db, "responses"), where("name", "==", localStorage.getItem('name')));
     // const querySnapshot = await getDocs(stateQuery);

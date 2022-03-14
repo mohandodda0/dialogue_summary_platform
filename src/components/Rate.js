@@ -5,6 +5,8 @@ import Highlightable from 'highlightable';
 // import jsonData from '../data/dialogsumdata.json';
 import jsonData from '../data/dialogsumtraincombined.json';
 
+import whichAnnotationsJson from '../config/testannotations.json';
+
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import 'rc-slider/assets/index.css';
@@ -32,8 +34,8 @@ function Rate() {
   // console.log(localStorage.getItem('name'))
   let [summaryPairs, setSummaryPairs] = useState([])
   const summarymodels = ['Salesforce/bart-large-xsum-samsum', 'philschmid/distilbart-cnn-12-6-samsum', 'henryu-lin/t5-large-samsum-deepspeed', 'linydub/bart-large-samsum', 'knkarthick/meeting-summary-samsum']
-  const testannotations = [24, 25, 26, 27, 28, 29, 30, 31, 32, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44]
-
+  const testannotations = whichAnnotationsJson['annotationsidxs']
+  console.log(testannotations)
 
   useEffect(() => {
     if (localStorage.getItem('name') && localStorage.getItem('name')!="") {
@@ -51,7 +53,7 @@ function Rate() {
     let localname = localStorage.getItem('name')
     console.log(localname)
     console.log(name)
-    const annotatorRef = doc(db, 'annotators', localname);
+    const annotatorRef = doc(db, 'annotators2', localname);
     console.log(annotatorRef)
     let annotatorDoc = await getDoc(annotatorRef)
     let annotatorData;
@@ -185,7 +187,7 @@ function Rate() {
 
     if (gradingTestAnnotation) {
       console.log(name)
-      const annotatorRef = doc(db, 'annotators', name);
+      const annotatorRef = doc(db, 'annotators2', name);
       let annotatorDoc = await getDoc(annotatorRef)
       let annotatorData;
       if (annotatorDoc.exists()) {

@@ -34,18 +34,16 @@ function Rate() {
   // console.log(localStorage.getItem('name'))
   let [summaryPairs, setSummaryPairs] = useState([])
   const summarymodels = ['Salesforce/bart-large-xsum-samsum', 'philschmid/distilbart-cnn-12-6-samsum', 'henryu-lin/t5-large-samsum-deepspeed', 'linydub/bart-large-samsum', 'knkarthick/meeting-summary-samsum']
-  const testannotations = whichAnnotationsJson['annotationsidxs']
-  console.log(testannotations)
+  // const testannotations = whichAnnotationsJson['annotationsidxs']
+  // console.log(testannotations)
 
   useEffect(() => {
     if (localStorage.getItem('name') && localStorage.getItem('name')!="") {
       setName(localStorage.getItem('name'))
       getDocument();
     } else {
-      // console.log('no name!!!1')
       history.push("/")
     }
-
   }, []);
 
   const getDocument = async () => {
@@ -66,18 +64,28 @@ function Rate() {
     }
 
     let text;
-    console.log(annotatorData)
     let testannotationlength = annotatorData.testannotations.length
-    console.log(testannotationlength)
-    if (testannotationlength<20) {
-      text = texts[testannotations[testannotationlength]]
+    // console.log(testannotationlength)
+    // console.log('herere',testannotations.length )
+    let testannotationsfromfile;
+    console.log(Object.keys(whichAnnotationsJson))
+    console.log(localname)
+    if (localname in whichAnnotationsJson) {
+      testannotationsfromfile = whichAnnotationsJson[localname]
+      console.log('here boi')
+    } else {
+      testannotationsfromfile = whichAnnotationsJson['annotationsidxs']
+      console.log('no here boi')
+    }
+    if (testannotationlength<testannotationsfromfile.length) {
+      text = texts[testannotationsfromfile[testannotationlength]]
       setGradingTestAnnotation(true)
     } else {
       text = texts[Math.floor(Math.random() * texts.length)]
       setGradingTestAnnotation(false)
     }
     // texts = texts.slice(0,1039)
-    // let text = texts[Math.floor(Math.random() * texts.length)]
+
     
     let lines = text.dialogue.split("\n")
     let expandedLines = []
@@ -89,19 +97,7 @@ function Rate() {
     setDialogueLines(expandedLines)
     setRangeList([])
     // const myset = new Set()
-    // while (myset.size<3) {
-    //   let bucket = [0,1,3,4]
-    //   let randomIndex1 = Math.floor(Math.random()*bucket.length);
-    //   let randnum1 = bucket.splice(randomIndex1, 1)[0];
-    //   let randomIndex2 = Math.floor(Math.random()*bucket.length);
-    //   let randnum2 = bucket.splice(randomIndex2, 1)[0];
-    //   console.log(randnum2, randnum1)
-    //   if (randnum2>randnum1) {
-    //     myset.add(randnum1+' '+randnum2)
-    //   } else {
-    //     myset.add(randnum2+' '+randnum1)
-    //   }
-    // }
+
     
     // let out = []
     // myset.forEach(pair => {
